@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:task="http://www.springframework.org/schema/task" xmlns:jpa="http://www.springframework.org/schema/data/jpa" xmlns:repository="http://www.springframework.org/schema/data/repository"
+	xmlns:cache="http://www.springframework.org/schema/cache" xmlns:encryption="http://www.jasypt.org/schema/encryption"
+	xsi:schemaLocation="http://www.springframework.org/schema/data/repository http://www.springframework.org/schema/data/repository/spring-repository-1.7.xsd
+						http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd 
+						http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+                        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd 
+                        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd 
+                        http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd
+                        http://www.jasypt.org/schema/encryption http://www.jasypt.org/schema/encryption/jasypt-spring3-encryption-1.xsd
+                        http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd">
+
+	<context:property-placeholder location="classpath:jdbc.properties" />
+	<!-- encrypted property-placeholder <encryption:encryptor-config id="encryptorConfig" password="PekaryanNakBali" algorithm="PBEWithMD5AndTripleDES" /> <encryption:string-encryptor 
+		id="stringEncryptor" config-bean="encryptorConfig" /> <encryption:encryptable-property-placeholder encryptor="stringEncryptor" location="classpath:jdbc.properties" /> -->
+
+	<jpa:repositories base-package="com.project.template.dao" transaction-manager-ref="txManager" />
+	<context:component-scan base-package="com.project.template.services.impl" />
+
+	<!-- setting for task schedule -->
+	<task:annotation-driven />
+
+	<!-- Spring-Hibernate Configuration -->
+	<context:annotation-config />
+	<tx:annotation-driven transaction-manager="txManager" />
+
+	<!-- enable spring caching -->
+	<cache:annotation-driven />
+	<bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
+		<property name="cacheManager" ref="ehcache" />
+	</bean>
+
+	<bean id="ehcache" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+		<property name="configLocation" value="classpath:ehcache.xml" />
+		<property name="shared" value="true" />
+	</bean>
+
+	<!-- main data source -->
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+		<property name="driverClass" value="${hibernate.connection.driver_class}" />
+		<property name="jdbcUrl" value="${hibernate.connection.url}" />
+		<property name="user" value="${hibernate.connection.username}" />
+		<property name="password" value="${hibernate.connection.password}" />
+		<!-- connection pooling -->
+		<property name="acquireIncrement" value="${hibernate.c3p0.acquire_increment}" />
+		<property name="minPoolSize" value="${hibernate.c3p0.min_size}" />
+		<property name="maxPoolSize" value="${hibernate.c3p0.max_size}" />
+		<property name="maxStatements" value="${hibernate.c3p0.max_statements}" />
+		<property name="maxIdleTime" value="${hibernate.c3p0.timeout}" />
+		<property name="idleConnectionTestPeriod" value="${hibernate.c3p0.idle_test_period}" />
+		<property name="testConnectionOnCheckin" value="${hibernate.c3p0.testConnectionOnCheckin}"></property>
+		<property name="preferredTestQuery">
+			<value>SELECT 1;</value>
+		</property>
+	</bean>
+
+	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="packagesToScan" value="com.project.template.model" />
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+				<property name="databasePlatform" value="${hibernate.dialect}" />
+				<property name="showSql" value="true" />
+			</bean>
+		</property>
+		<property name="jpaDialect">
+			<bean class="com.project.template.services.tx.CustomHibernateJpaDialect" />
+		</property>
+		<property name="jpaProperties">
+			<props>
+				<prop key="hibernate.format_sql">true</prop>
+				<prop key="hibernate.show_statistics">${hibernate.show_statistics}</prop>
+				<prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl_auto}</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="txManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="entityManagerFactory" />
+	</bean>
+
+</beans>
