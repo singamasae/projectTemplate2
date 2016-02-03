@@ -1,32 +1,67 @@
 <beans:beans xmlns="http://www.springframework.org/schema/security" xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
-           http://www.springframework.org/schema/beans/spring-beans.xsd
-           http://www.springframework.org/schema/security
-           http://www.springframework.org/schema/security/spring-security.xsd">
+		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/security
+		http://www.springframework.org/schema/security/spring-security.xsd">
 
-	<http pattern="/libs/**/*" security="none" />
+	<http pattern="/js/**/*" security="none" />
 
-	<http>		
-		<intercept-url pattern="/api/**" access="authenticated" />
-		<intercept-url pattern="/login" access="permitAll" />
-		<intercept-url pattern="/**" access="authenticated" />		
-		<form-login login-page='/login' default-target-url='/home' always-use-default-target='true' />
-		<logout />
-		<csrf />
+	<http entry-point-ref="customAuthenticationEntryPoint">
+		<intercept-url pattern="/user/authenticate" access="permitAll" method="POST"/>	
+		<intercept-url pattern="/api/**" access="authenticated" />	
+		<csrf token-repository-ref="csrfTokenRepository" />
+		<custom-filter ref="csrfHeaderFilter" after="CSRF_FILTER" />
+		<custom-filter ref="loginFilter" position="FORM_LOGIN_FILTER" />
+	</http>	
+	<!-- 
+	<http entry-point-ref="customAuthenticationEntryPoint">
+		<intercept-url pattern="/api/**" access="authenticated" />		
+		<csrf token-repository-ref="csrfTokenRepository" />		
 	</http>
+	 -->
 
-	<authentication-manager>
+	<authentication-manager id="authenticationManager">
 		<authentication-provider>
 			<user-service>
 				<user name="admin" password="admin" authorities="ROLE_USER, ROLE_ADMIN" />
 			</user-service>
 		</authentication-provider>
 	</authentication-manager>
+	
+	<beans:bean id="csrfHeaderFilter" class="com.project.template.services.security.CsrfHeaderFilter" />
 
-	<!-- <http entry-point-ref="customAuthenticationEntryPoint"> <intercept-url pattern="/api/**" access="authenticated" /> <intercept-url pattern="/login" access="permitAll" /> 
-		<form-login login-page="/login" username-parameter="username" password-parameter="password" login-processing-url="/login" default-target-url="/home" always-use-default-target="true" 
-		/> <logout logout-success-url="/login.html" /> <session-management> <concurrency-control max-sessions="1" /> </session-management> <csrf /> </http> <authentication-manager> <authentication-provider 
-		user-service-ref="myUserDetailsService"> <password-encoder ref="bCryptPasswordEncoder" /> </authentication-provider> </authentication-manager> <beans:bean id="customAuthenticationEntryPoint" 
-		class="com.project.template.services.security.CustomAuthenticationEntryPoint" /> <beans:bean id="myUserDetailsService" class="com.project.template.services.security.MyUserDetailsService" 
-		/> <beans:bean id="bCryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" /> -->
+	<beans:bean id="csrfTokenRepository" class="org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository">
+		<beans:property name="headerName" value="X-XSRF-TOKEN" />
+	</beans:bean>
+	
+	<beans:bean id="customAuthenticationEntryPoint" class="com.project.template.services.security.CustomAuthenticationEntryPoint" />
+	
+	<beans:bean id="loginFilter" class="com.project.template.services.security.CustomAuthenticationFilter">
+		<beans:constructor-arg type="java.lang.String">
+			<beans:value>/user/authenticate</beans:value>
+		</beans:constructor-arg>
+		<beans:constructor-arg ref="authenticationManager" />
+	</beans:bean>	
+
+	<!-- 
+	<http entry-point-ref="customAuthenticationEntryPoint">
+		<intercept-url pattern="/api/**" access="authenticated" />
+		<intercept-url pattern="/login" access="permitAll" />
+		<form-login login-page="/login" username-parameter="username" password-parameter="password" login-processing-url="/login" default-target-url="/home"
+			always-use-default-target="true" />
+		<logout logout-success-url="/login.html" />
+		<session-management>
+			<concurrency-control max-sessions="1" />
+		</session-management>
+		<csrf />
+	</http>
+	<authentication-manager>
+		<authentication-provider user-service-ref="myUserDetailsService">
+			<password-encoder ref="bCryptPasswordEncoder" />
+		</authentication-provider>
+	</authentication-manager>
+	<beans:bean id="customAuthenticationEntryPoint" class="com.project.template.services.security.CustomAuthenticationEntryPoint" />
+	<beans:bean id="myUserDetailsService" class="com.project.template.services.security.MyUserDetailsService" />
+	<beans:bean id="bCryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
+	 -->
 </beans:beans>
