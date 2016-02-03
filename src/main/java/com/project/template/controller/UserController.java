@@ -17,7 +17,7 @@ public class UserController {
 		return "forward:/";
 	}
 
-	@RequestMapping("/user")
+	@RequestMapping("/api/user")
 	@ResponseBody
 	public Principal user(Principal user) {
 		return user;

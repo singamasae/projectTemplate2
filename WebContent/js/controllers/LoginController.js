@@ -10,5 +10,14 @@ angular.module('app').controller(
 						});
 
 					};
+					
+					$scope.logout = function() {
+						MainServices.logout().success(function(data, status, headers, config) {
+
+						}).error(function(data, status, headers, config) {
+
+						});
+
+					};
 
 				} ]);

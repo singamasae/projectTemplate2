@@ -9,16 +9,12 @@
 	<http entry-point-ref="customAuthenticationEntryPoint">
 		<intercept-url pattern="/user/authenticate" access="permitAll" method="POST"/>	
 		<intercept-url pattern="/api/**" access="authenticated" />	
+		<intercept-url pattern="/" access="permitAll" />
 		<csrf token-repository-ref="csrfTokenRepository" />
 		<custom-filter ref="csrfHeaderFilter" after="CSRF_FILTER" />
 		<custom-filter ref="loginFilter" position="FORM_LOGIN_FILTER" />
+		<logout invalidate-session="true" delete-cookies="JSESSIONID"/>
 	</http>	
-	<!-- 
-	<http entry-point-ref="customAuthenticationEntryPoint">
-		<intercept-url pattern="/api/**" access="authenticated" />		
-		<csrf token-repository-ref="csrfTokenRepository" />		
-	</http>
-	 -->
 
 	<authentication-manager id="authenticationManager">
 		<authentication-provider>
