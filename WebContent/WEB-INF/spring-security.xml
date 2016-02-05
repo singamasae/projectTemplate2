@@ -7,6 +7,9 @@
 		http://www.springframework.org/schema/security/spring-security.xsd">
 
 	<http pattern="/js/**/*" security="none" />
+	<http pattern="/libs/**/*" security="none" />
+	<http pattern="/scripts/**/*" security="none" />
+	<http pattern="/styles/**/*" security="none" />
 
 	<http entry-point-ref="customAuthenticationEntryPoint">
 		<intercept-url pattern="/user/authenticate" access="permitAll" method="POST"/>
