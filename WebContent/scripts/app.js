@@ -21,6 +21,17 @@ angular
 	  'ngSanitize',
 	  'ngTouch'
   ])
+  .constant('propertiesConstant', {
+		BASE_URL : '/projectTemplate2',
+		API_URL : '/projectTemplate2/api',
+		STORAGE_KEY : 'x_auth_token',
+		TOKEN_HEADER : 'X-AUTH-TOKEN',		
+		LOCAL_STORAGE : 'LOCAL_STORAGE',
+		PAGE_TOTAL_ITEMS : 0,
+		PAGE_CURRENT_PAGE : 1,
+		PAGE_MAX_SIZE : 5,
+		PAGE_ITEMS_PERPAGE : 10
+	})
   .config(['$stateProvider','$urlRouterProvider','$ocLazyLoadProvider',function ($stateProvider,$urlRouterProvider,$ocLazyLoadProvider) {
     
     $ocLazyLoadProvider.config({
@@ -58,14 +69,14 @@ angular
     })
       .state('dashboard.home',{
         url:'/home',
-        controller: 'MainCtrl',
+        controller: 'HomeController',
         templateUrl:'views/dashboard/home.html',
         resolve: {
           loadMyFiles:function($ocLazyLoad) {
             return $ocLazyLoad.load({
               name:'app',
               files:[
-              'scripts/controllers/main.js',
+              'scripts/controllers/HomeController.js',
               'scripts/directives/timeline/timeline.js',
               'scripts/directives/notifications/notifications.js',
               'scripts/directives/chat/chat.js',
@@ -84,8 +95,20 @@ angular
         url:'/blank'
     })
       .state('login',{
-        templateUrl:'views/pages/login.html',
-        url:'/login'
+    	  url:'/login',
+    	  controller : 'LoginController',
+    	  templateUrl:'views/pages/login.html',
+    	  resolve:{
+			  loadMyFiles:function($ocLazyLoad) {
+		            return $ocLazyLoad.load({
+		              name:'app',
+		              files:[		             
+		              'scripts/controllers/LoginController.js',
+		              'scripts/services/authenticationServices.js'
+		              ]
+		            })
+		          }
+    	  }
     })
       .state('dashboard.chart',{
         templateUrl:'views/chart.html',
