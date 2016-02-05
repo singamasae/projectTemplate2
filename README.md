@@ -1,12 +1,10 @@
 # projectTemplate2
-an integrated java web framework for modern web application.
+an integrated java web framework for modern web application. Built with [angularjs](https://angularjs.org/) and [sb-admin-2](http://startbootstrap.com/template-overviews/sb-admin-2/)
 
 ## Feature
 * RESTFul web service with json
 * secured by Spring Security with CSRF Token protection
 * Stateful with httpSession 
-
-built with [angularjs](https://angularjs.org/) and [sb-admin-2](http://startbootstrap.com/template-overviews/sb-admin-2/)
 
 ## Framework
 #### Backend
