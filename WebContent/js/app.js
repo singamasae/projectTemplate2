@@ -50,6 +50,9 @@ angular
                     files:[
                     'js/controllers/DashboardController.js',
                     'js/services/authenticationServices.js',
+                    'js/services/permissionServices.js',
+					'js/directives/hasPermission.js',
+					'js/directives/delete/ngDeleteClick.js',
                     'js/directives/header/header.js',
                     'js/directives/header/header-notification/header-notification.js',
                     'js/directives/sidebar/sidebar.js',
