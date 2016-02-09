@@ -7,9 +7,9 @@
  * # adminPosHeader
  */
 angular.module('app')
-	.directive('notifications',function(){
+	.directive('chat',function(){
 		return {
-        templateUrl:'scripts/directives/notifications/notifications.html',
+        templateUrl:'js/directives/chat/chat.html',
         restrict: 'E',
         replace: true,
     	}

@@ -7,12 +7,10 @@
  * # adminPosHeader
  */
 angular.module('app')
-	.directive('headerNotification',function(){
-		return {
-        templateUrl:'scripts/directives/header/header-notification/header-notification.html',
+	.directive('timeline',function() {
+    return {
+        templateUrl:'js/directives/timeline/timeline.html',
         restrict: 'E',
         replace: true,
-    	}
-	});
-
-
+    }
+  });
