@@ -35,7 +35,7 @@ angular
       events:true,
     });
 
-    $urlRouterProvider.otherwise('/login');
+    $urlRouterProvider.otherwise('/404');
 
     $stateProvider
       .state('dashboard', {
@@ -159,6 +159,10 @@ angular
       .state('dashboard.grid',{
        templateUrl:'views/ui-elements/grid.html',
        url:'/grid'
+   })
+   	  .state('404',{
+       templateUrl:'404.html',
+       url:'/404'
    })
   }]);
 

@@ -8,9 +8,8 @@
 
 	<http pattern="/js/**/*" security="none" />
 	<http pattern="/libs/**/*" security="none" />
-	<http pattern="/scripts/**/*" security="none" />
-	<http pattern="/styles/**/*" security="none" />
-
+	<http pattern="/css/**/*" security="none" />
+	
 	<http entry-point-ref="customAuthenticationEntryPoint">
 		<intercept-url pattern="/user/authenticate" access="permitAll" method="POST"/>
 		<intercept-url pattern="/api/**" access="authenticated" />
@@ -22,15 +21,11 @@
 		<session-management>
             <concurrency-control max-sessions="1"/>
         </session-management>
-	</http>
-	
-	<beans:bean id="csrfHeaderFilter" class="com.project.template.services.security.CsrfHeaderFilter" />
+	</http>	
 
 	<beans:bean id="csrfTokenRepository" class="org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository">
 		<beans:property name="headerName" value="X-XSRF-TOKEN" />
-	</beans:bean>
-	
-	<beans:bean id="customAuthenticationEntryPoint" class="com.project.template.services.security.CustomAuthenticationEntryPoint" />
+	</beans:bean>	
 	
 	<beans:bean id="loginFilter" class="com.project.template.services.security.CustomAuthenticationFilter">
 		<beans:constructor-arg type="java.lang.String">
@@ -40,32 +35,15 @@
 	</beans:bean>	
 	
 	<authentication-manager id="authenticationManager">
-		<authentication-provider>
-			<user-service>
-				<user name="admin" password="admin" authorities="ROLE_USER, ROLE_ADMIN" />
-			</user-service>
-		</authentication-provider>
-	</authentication-manager>
-
-	<!-- 
-	<http entry-point-ref="customAuthenticationEntryPoint">
-		<intercept-url pattern="/api/**" access="authenticated" />
-		<intercept-url pattern="/login" access="permitAll" />
-		<form-login login-page="/login" username-parameter="username" password-parameter="password" login-processing-url="/login" default-target-url="/home"
-			always-use-default-target="true" />
-		<logout logout-success-url="/login.html" />
-		<session-management>
-			<concurrency-control max-sessions="1" />
-		</session-management>
-		<csrf />
-	</http>
-	<authentication-manager>
 		<authentication-provider user-service-ref="myUserDetailsService">
 			<password-encoder ref="bCryptPasswordEncoder" />
 		</authentication-provider>
 	</authentication-manager>
+	
+	<beans:bean id="csrfHeaderFilter" class="com.project.template.services.security.CsrfHeaderFilter" />
 	<beans:bean id="customAuthenticationEntryPoint" class="com.project.template.services.security.CustomAuthenticationEntryPoint" />
 	<beans:bean id="myUserDetailsService" class="com.project.template.services.security.MyUserDetailsService" />
 	<beans:bean id="bCryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
-	 -->
+	
+
 </beans:beans>
