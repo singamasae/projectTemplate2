@@ -28,6 +28,18 @@ angular
 	TOKEN_HEADER : 'X-AUTH-TOKEN',	
 	LOCAL_STORAGE : 'LOCAL_STORAGE'
   })
+  .factory('AuthInterceptor', function($q, $location, $rootScope) {
+	return {		
+		responseError : function(error) {
+			if (error.status === 401 || error.status === 403) {				
+				$location.path('/login');
+			}
+			return $q.reject(error);
+		}
+	};
+	}).config(function($httpProvider) {
+		$httpProvider.interceptors.push('AuthInterceptor');
+	})
   .config(['$stateProvider','$urlRouterProvider','$ocLazyLoadProvider',function ($stateProvider,$urlRouterProvider,$ocLazyLoadProvider) {
     
     $ocLazyLoadProvider.config({
