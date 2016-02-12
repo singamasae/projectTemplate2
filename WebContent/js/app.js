@@ -176,6 +176,8 @@ angular
        templateUrl:'404.html',
        url:'/404'
    })
-  }]);
+  }]).run(['$http','propertiesConstant', function($http, propertiesConstant) {
+	  $http.get(propertiesConstant.API_URL + '/isAuthenticated');	  
+	}]);
 
     

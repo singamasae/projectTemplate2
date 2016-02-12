@@ -2,7 +2,7 @@
  * 
  */
 'use strict';
-angular.module('app').factory('authenticationServices', [ '$state', '$http', 'propertiesConstant', function($state, $http, propertiesConstant) {
+angular.module('app').factory('authenticationServices', [ '$http', 'propertiesConstant', function($http, propertiesConstant) {
 	var service = {
 		login : function(master) {
 			return $http.post(propertiesConstant.BASE_URL + '/user/authenticate', master);
@@ -13,7 +13,6 @@ angular.module('app').factory('authenticationServices', [ '$state', '$http', 'pr
 		change : function(passwd) {
 			return $http.put(propertiesConstant.API_URL + '/user/passwd?currentPasswd=' + passwd.current + '&newPasswd=' + passwd.newx + '&renewPasswd=' + passwd.renew);
 		}
-
 	};
 	return service;
 } ]);

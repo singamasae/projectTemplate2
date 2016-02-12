@@ -1,7 +1,5 @@
-<beans:beans xmlns="http://www.springframework.org/schema/security" 
-		xmlns:beans="http://www.springframework.org/schema/beans" 
-		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		xsi:schemaLocation="http://www.springframework.org/schema/beans
+<beans:beans xmlns="http://www.springframework.org/schema/security" xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
 		http://www.springframework.org/schema/security
 		http://www.springframework.org/schema/security/spring-security.xsd">
@@ -9,41 +7,62 @@
 	<http pattern="/js/**/*" security="none" />
 	<http pattern="/libs/**/*" security="none" />
 	<http pattern="/css/**/*" security="none" />
-	
+
 	<http entry-point-ref="customAuthenticationEntryPoint">
-		<intercept-url pattern="/user/authenticate" access="permitAll" method="POST"/>
+		<intercept-url pattern="/user/authenticate" access="permitAll" method="POST" />
 		<intercept-url pattern="/api/**" access="authenticated" />
 		<intercept-url pattern="/" access="permitAll" />
 		<csrf token-repository-ref="csrfTokenRepository" />
 		<custom-filter ref="csrfHeaderFilter" after="CSRF_FILTER" />
 		<custom-filter ref="loginFilter" position="FORM_LOGIN_FILTER" />
-		<logout invalidate-session="true" delete-cookies="JSESSIONID"/>
-		<session-management>
-            <concurrency-control max-sessions="1"/>
-        </session-management>
-	</http>	
+		<custom-filter position="CONCURRENT_SESSION_FILTER" ref="concurrencyFilter" />
+		<logout invalidate-session="true" delete-cookies="JSESSIONID" />
+		<session-management session-authentication-strategy-ref="sas" />
+	</http>
 
 	<beans:bean id="csrfTokenRepository" class="org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository">
 		<beans:property name="headerName" value="X-XSRF-TOKEN" />
-	</beans:bean>	
-	
+	</beans:bean>
+
 	<beans:bean id="loginFilter" class="com.project.template.services.security.CustomAuthenticationFilter">
 		<beans:constructor-arg type="java.lang.String">
 			<beans:value>/user/authenticate</beans:value>
 		</beans:constructor-arg>
 		<beans:constructor-arg ref="authenticationManager" />
-	</beans:bean>	
-	
+		<beans:constructor-arg ref="sas" />
+	</beans:bean>
+
 	<authentication-manager id="authenticationManager">
 		<authentication-provider user-service-ref="myUserDetailsService">
 			<password-encoder ref="bCryptPasswordEncoder" />
 		</authentication-provider>
 	</authentication-manager>
-	
+
+	<beans:bean id="concurrencyFilter" class="org.springframework.security.web.session.ConcurrentSessionFilter">
+		<beans:constructor-arg ref="sessionRegistry" />
+	</beans:bean>
+
+	<beans:bean id="sas" class="org.springframework.security.web.authentication.session.CompositeSessionAuthenticationStrategy">
+		<beans:constructor-arg>
+			<beans:list>
+				<beans:bean class="org.springframework.security.web.authentication.session.ConcurrentSessionControlAuthenticationStrategy">
+					<beans:constructor-arg ref="sessionRegistry" />
+					<beans:property name="maximumSessions" value="1" />
+					<beans:property name="exceptionIfMaximumExceeded" value="true" />
+				</beans:bean>
+				<beans:bean class="org.springframework.security.web.authentication.session.SessionFixationProtectionStrategy">
+				</beans:bean>
+				<beans:bean class="org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy">
+					<beans:constructor-arg ref="sessionRegistry" />
+				</beans:bean>
+			</beans:list>
+		</beans:constructor-arg>
+	</beans:bean>
+
 	<beans:bean id="csrfHeaderFilter" class="com.project.template.services.security.CsrfHeaderFilter" />
 	<beans:bean id="customAuthenticationEntryPoint" class="com.project.template.services.security.CustomAuthenticationEntryPoint" />
 	<beans:bean id="myUserDetailsService" class="com.project.template.services.security.MyUserDetailsService" />
 	<beans:bean id="bCryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
-	
+	<beans:bean id="sessionRegistry" class="org.springframework.security.core.session.SessionRegistryImpl" />
 
 </beans:beans>
