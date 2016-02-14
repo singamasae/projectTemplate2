@@ -18,6 +18,7 @@ public class UserController {
 	@RequestMapping(value = "/{[path:[^\\.]*}")
 	public String redirect() throws Exception {
 		// Forward to home page so that route is preserved.
+		log.info("forward:/");
 		return "forward:/";
 	}
 
