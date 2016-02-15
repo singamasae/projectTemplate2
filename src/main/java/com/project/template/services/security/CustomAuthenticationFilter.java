@@ -21,7 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.template.model.User;
 
 class CustomAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
-
+	//private static Logger log = LoggerFactory.getLogger(CustomAuthenticationFilter.class);
 	protected CustomAuthenticationFilter(String defaultFilterProcessesUrl, AuthenticationManager authenticationManager, SessionAuthenticationStrategy sas) {
 		super(defaultFilterProcessesUrl);
 		// TODO Auto-generated constructor stub
@@ -36,7 +36,7 @@ class CustomAuthenticationFilter extends AbstractAuthenticationProcessingFilter 
 		User user = new ObjectMapper().readValue(request.getInputStream(), User.class);
 		if (user == null) {
 			throw new UsernameNotFoundException("BAD_CREDENTIAL");
-		}
+		}		
 		UsernamePasswordAuthenticationToken loginToken = new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());		
 		return getAuthenticationManager().authenticate(loginToken);
 	}
@@ -46,6 +46,6 @@ class CustomAuthenticationFilter extends AbstractAuthenticationProcessingFilter 
 			ServletException {
 		// TODO Auto-generated method stub
 		super.successfulAuthentication(request, response, chain, authResult);
-		SecurityContextHolder.getContext().setAuthentication(authResult);
+		SecurityContextHolder.getContext().setAuthentication(authResult);		
 	}
 }

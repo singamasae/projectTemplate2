@@ -16,10 +16,10 @@ import com.project.template.services.UserServices;
 public class MyUserDetailsService implements UserDetailsService {
 	@Autowired
 	UserServices userServices;
-
+	//private static Logger log = LoggerFactory.getLogger(MyUserDetailsService.class);
 	public UserDetails loadUserByUsername(String username)
 			throws UsernameNotFoundException {
-		// TODO Auto-generated method stub
+		// TODO Auto-generated method stub		
 		User user = userServices.findByUserName(username);
 		if (user == null) {
 			throw new UsernameNotFoundException("BAD_CREDENTIAL");
