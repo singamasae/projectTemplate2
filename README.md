@@ -8,7 +8,7 @@ an integrated java web framework for modern web application. Built with [angular
 
 ## Framework
 #### Backend
-* springframework 4.2.4.RELEASE
+* springframework 5.2.9.RELEASE
 * spring-data-jpa 1.9.2.RELEASE
 * spring-security 4.0.3.RELEASE
 * hibernate 5.0.7.Final
